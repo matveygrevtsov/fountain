@@ -77,11 +77,11 @@ requestAnimationFrame(tick);
 function tick(timestamp) {
     requestAnimationFrame(tick);
     context.clearRect(0, 0, canvas.width, canvas.height);
-    canvasItems.forEach((item) => {
+    canvasItems.forEach((item, index) => {
         context.beginPath();
         context.save();
         context.translate(item.x + item.width / 2, item.y + item.width / 2);
-        context.rotate(timestamp / 1000 * rotationSpeed);
+        context.rotate(timestamp / 1000 * rotationSpeed * (2*(index % 2) - 1));
         context.translate(-item.x - item.width / 2, -item.y - item.width / 2);
         context.drawImage(imgSkins[item.skin], item.x, item.y, item.width, item.width);
         context.restore();
