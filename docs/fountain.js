@@ -2,15 +2,15 @@ const canvas = document.querySelector("#fountain");
 const imgSkins = document.querySelectorAll("#fountainImgs img");
 
 let animationSpeed = 15;
-let power = 100; 
-let itemsNumber = 15; 
+let power = 100;
+let itemsNumber = 15;
 let spreadAngle = 180;
-let itemsSize = [100, 380]; 
-let g = 10; 
-let rotationSpeed = 7; 
+let itemsSize = [100, 380];
+let g = 10;
+let rotationSpeed = 7;
 
 const context = canvas.getContext("2d");
-let x_0; 
+let x_0;
 let y_0;
 let canvasItems;
 setCanvasSize();
@@ -49,7 +49,7 @@ class CanvasItem {
             y_0 - this.v_0y * this.t * Math.sin(this.alpha) +
             (g * this.t * this.t) / 2;
         this.incrementTime();
-        if (this.y > y_0 || (this.y + this.width < 0) || (this.x > canvas.width) || (this.x + this.width < 0)) {
+        if ((this.y > y_0 + 2 * this.width) || (this.y < -2 * this.width) || (this.x > canvas.width + 2 * this.width) || (this.x < -2 * this.width)) {
             this.resetParams();
         }
     }
@@ -81,7 +81,7 @@ function tick(timestamp) {
         context.beginPath();
         context.save();
         context.translate(item.x + item.width / 2, item.y + item.width / 2);
-        context.rotate(timestamp / 1000 * rotationSpeed * (2*(index % 2) - 1));
+        context.rotate(timestamp / 1000 * rotationSpeed * (2 * (index % 2) - 1));
         context.translate(-item.x - item.width / 2, -item.y - item.width / 2);
         context.drawImage(imgSkins[item.skin], item.x, item.y, item.width, item.width);
         context.restore();
