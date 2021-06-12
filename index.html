@@ -1,0 +1,35 @@
+<html>
+
+<head>
+	<style>
+	* {
+		margin: 0;
+		padding: 0;
+	}
+	
+	#fountainImgs {
+		display: none;
+	}
+	
+	#fountain {
+		background-color: black;
+	}
+	</style>
+	<meta name="viewport" content="width=device-width, initial-scale=1"> </head>
+
+<body>
+	<!-- Сюда кладём скины для объектов, которые будет подбрасывать фонтан -->
+	<div id="fountainImgs"> 
+		<img src="img/coin1.svg"> 
+		<img src="img/coin2.svg"> 
+	</div>
+
+	<canvas id="fountain"></canvas>
+	<script src="fountain.js"></script>
+
+	<!-- Нужно удалить эти 2 скрипта перед продакшеном: -->
+	<script src="dat_gui/dat.gui.min.js"></script>
+	<script src="dat_gui/dat.gui.init.js"></script>
+</body>
+
+</html>
