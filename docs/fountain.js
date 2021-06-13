@@ -8,6 +8,7 @@ let spreadAngle = 180;
 let itemsSize = [100, 380];
 let g = 10;
 let rotationSpeed = 7;
+let period = 0;
 
 const context = canvas.getContext("2d");
 let x_0;
@@ -28,7 +29,7 @@ function setCanvasSize() {
 window.addEventListener("resize", setCanvasSize);
 
 class CanvasItem {
-    constructor(speed_x, speed_y, alpha, skin, width) {
+    constructor(speed_x, speed_y, alpha, skin, width, id) {
         this.t = 0;
         this.x = canvas.width - width / 2;
         this.y = canvas.height;
@@ -37,10 +38,7 @@ class CanvasItem {
         this.alpha = alpha;
         this.skin = skin;
         this.width = width;
-    }
-
-    incrementTime() {
-        this.t += animationSpeed / 100;
+        this.id = id;
     }
 
     move() {
@@ -48,7 +46,7 @@ class CanvasItem {
         this.y =
             y_0 - this.v_0y * this.t * Math.sin(this.alpha) +
             (g * this.t * this.t) / 2;
-        this.incrementTime();
+        this.t += animationSpeed * period / 1000;
         if ((this.y > y_0 + 2 * this.width) || (this.y < -2 * this.width) || (this.x > canvas.width + 2 * this.width) || (this.x < -2 * this.width)) {
             this.resetParams();
         }
@@ -61,12 +59,22 @@ class CanvasItem {
         this.alpha = randomFromInterval(dispersion());
         this.width = randomFromInterval(itemsSize);
     }
+
+    render(timestamp) {
+        context.save();
+        context.translate(this.x + this.width / 2, this.y + this.width / 2);
+        context.rotate(timestamp / 1000 * rotationSpeed * (2 * (this.id % 2) - 1));
+        context.translate(-this.x - this.width / 2, -this.y - this.width / 2);
+        context.drawImage(imgSkins[this.skin], this.x, this.y, this.width, this.width);
+        context.restore();
+        this.move();
+    }
 }
 
 const initCanvasItems = () => {
     canvasItems = [];
     for (let i = 0; i < itemsNumber; i++) {
-        canvasItems.push(new CanvasItem(power, power, randomFromInterval(dispersion()), i % imgSkins.length, randomFromInterval(itemsSize)));
+        canvasItems.push(new CanvasItem(power, power, randomFromInterval(dispersion()), i % imgSkins.length, randomFromInterval(itemsSize), i));
     }
 }
 
@@ -74,17 +82,17 @@ initCanvasItems();
 
 requestAnimationFrame(tick);
 
+let frameIndex = 0;
+let prevTimestamp = 0;
+
 function tick(timestamp) {
     requestAnimationFrame(tick);
     context.clearRect(0, 0, canvas.width, canvas.height);
-    canvasItems.forEach((item, index) => {
-        context.beginPath();
-        context.save();
-        context.translate(item.x + item.width / 2, item.y + item.width / 2);
-        context.rotate(timestamp / 1000 * rotationSpeed * (2 * (index % 2) - 1));
-        context.translate(-item.x - item.width / 2, -item.y - item.width / 2);
-        context.drawImage(imgSkins[item.skin], item.x, item.y, item.width, item.width);
-        context.restore();
-        item.move();
-    });
+    if (frameIndex > 2) {
+        canvasItems.forEach(item => item.render(timestamp));
+    } else {
+        period = timestamp - prevTimestamp;
+        prevTimestamp = timestamp;
+        frameIndex++;
+    }
 }
