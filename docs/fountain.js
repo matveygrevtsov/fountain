@@ -1,13 +1,13 @@
 const canvas = document.querySelector("#fountain");
 const imgSkins = document.querySelectorAll("#fountainImgs img");
 
-let animationSpeed = 15;
+let animationSpeed = 5;
 let power = 100;
 let itemsNumber = 15;
 let spreadAngle = 180;
 let itemsSize = [100, 380];
 let g = 10;
-let rotationSpeed = 7;
+let rotationSpeed = 1;
 let period = 0;
 
 const context = canvas.getContext("2d");
