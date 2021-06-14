@@ -63,10 +63,10 @@ class CanvasItem {
         this.width = randomFromInterval(itemsSize);
     }
 
-    render(timestamp) {
+    render() {
     	context.save();
         context.translate(this.x + this.width / 2, this.y + this.width / 2);
-        context.rotate(timestamp / 1000 * rotationSpeed * (2 * (this.id % 2) - 1));
+        context.rotate(this.t * rotationSpeed * (2 * (this.id % 2) - 1));
         context.translate(-this.x - this.width / 2, -this.y - this.width / 2);
         context.drawImage(imgSkins[this.skin], this.x, this.y, this.width, this.width);
         context.restore();
@@ -101,7 +101,7 @@ const startFountain = () => {
     	requestAnimationFrame(tick);
     	calculatePeriod(timestamp);
     	context.clearRect(0, 0, canvas.width, canvas.height);
-    	canvasItems.forEach(item => item.render(timestamp));
+    	canvasItems.forEach(item => item.render());
 	}
 }
 
