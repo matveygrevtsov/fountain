@@ -33,10 +33,10 @@ function setCanvasSize() {
 class CanvasItem {
   constructor(shotAngle, width, id) {
     this.t = 0
-    this.x = canvas.width - width / 2
-    this.y = canvas.height
     this.shotAngle = shotAngle
     this.width = width
+    this.x = canvas.width - width / 2
+    this.y = canvas.height
     this.id = id
   }
 
@@ -45,12 +45,12 @@ class CanvasItem {
   }
 
   move() {
+    this.incrementTime()
     this.x = x_0 + power * this.t * Math.cos(this.shotAngle) - this.width / 2
     this.y =
       y_0 -
       power * this.t * Math.sin(this.shotAngle) +
       (g * this.t * this.t) / 2
-    this.incrementTime()
     if (
       this.y > y_0 + 2 * this.width ||
       this.y < -2 * this.width ||
@@ -65,6 +65,8 @@ class CanvasItem {
     this.t = 0
     this.shotAngle = randomFromInterval(dispersion())
     this.width = randomFromInterval(itemsSize)
+    this.x = canvas.width - this.width / 2
+    this.y = canvas.height
   }
 
   render() {
