@@ -1,13 +1,13 @@
 const canvas = document.querySelector("#fountain");
 const imgSkins = document.querySelectorAll("#fountainImgs img");
 
-let animationSpeed = 15;
+let animationSpeed = 2;
 let power = 100;
 let itemsNumber = 15;
 let spreadAngle = 180;
 let itemsSize = [100, 380];
 let g = 10;
-let rotationSpeed = 7;
+let rotationSpeed = 1;
 
 const context = canvas.getContext("2d");
 let x_0;
@@ -28,7 +28,7 @@ function setCanvasSize() {
 window.addEventListener("resize", setCanvasSize);
 
 class CanvasItem {
-    constructor(speed_x, speed_y, alpha, skin, width) {
+    constructor(speed_x, speed_y, alpha, skin, width, id) {
         this.t = 0;
         this.x = canvas.width - width / 2;
         this.y = canvas.height;
@@ -37,10 +37,11 @@ class CanvasItem {
         this.alpha = alpha;
         this.skin = skin;
         this.width = width;
+        this.id = id;
     }
 
     incrementTime() {
-        this.t += animationSpeed / 100;
+        this.t += animationSpeed * period / 1000;
     }
 
     move() {
@@ -61,30 +62,47 @@ class CanvasItem {
         this.alpha = randomFromInterval(dispersion());
         this.width = randomFromInterval(itemsSize);
     }
+
+    render(timestamp) {
+    	context.save();
+        context.translate(this.x + this.width / 2, this.y + this.width / 2);
+        context.rotate(timestamp / 1000 * rotationSpeed * (2 * (this.id % 2) - 1));
+        context.translate(-this.x - this.width / 2, -this.y - this.width / 2);
+        context.drawImage(imgSkins[this.skin], this.x, this.y, this.width, this.width);
+        context.restore();
+        this.move();
+    }
 }
 
 const initCanvasItems = () => {
     canvasItems = [];
     for (let i = 0; i < itemsNumber; i++) {
-        canvasItems.push(new CanvasItem(power, power, randomFromInterval(dispersion()), i % imgSkins.length, randomFromInterval(itemsSize)));
+        canvasItems.push(new CanvasItem(power, power, randomFromInterval(dispersion()), i % imgSkins.length, randomFromInterval(itemsSize), i));
     }
 }
 
 initCanvasItems();
 
-requestAnimationFrame(tick);
+let period = 0;
 
-function tick(timestamp) {
-    requestAnimationFrame(tick);
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    canvasItems.forEach((item, index) => {
-        context.beginPath();
-        context.save();
-        context.translate(item.x + item.width / 2, item.y + item.width / 2);
-        context.rotate(timestamp / 1000 * rotationSpeed * (2 * (index % 2) - 1));
-        context.translate(-item.x - item.width / 2, -item.y - item.width / 2);
-        context.drawImage(imgSkins[item.skin], item.x, item.y, item.width, item.width);
-        context.restore();
-        item.move();
-    });
+const getPeriodCalculator = () => {
+	let prevTimestamp = 0;
+	return (timestamp) => {
+		period = timestamp - prevTimestamp;
+		prevTimestamp = timestamp;
+	}
 }
+
+const calculatePeriod = getPeriodCalculator();
+
+const startFountain = () => {
+	requestAnimationFrame(tick);
+	function tick(timestamp) {
+    	requestAnimationFrame(tick);
+    	calculatePeriod(timestamp);
+    	context.clearRect(0, 0, canvas.width, canvas.height);
+    	canvasItems.forEach(item => item.render(timestamp));
+	}
+}
+
+window.addEventListener("load", startFountain);
