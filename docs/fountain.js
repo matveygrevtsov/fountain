@@ -88,7 +88,7 @@ let period = 0;
 const getPeriodCalculator = () => {
 	let prevTimestamp = 0;
 	return (timestamp) => {
-		period = timestamp - prevTimestamp;
+		period = (timestamp < 500) ? 0 : timestamp - prevTimestamp;
 		prevTimestamp = timestamp;
 	}
 }
